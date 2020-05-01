@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    username: postgres
+    password: docker
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/spring_cloud_loja
+  jpa:
+    hibernate:
+      ddl-auto: update
