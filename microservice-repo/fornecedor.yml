@@ -6,4 +6,4 @@ spring:
     url: jdbc:postgresql://localhost:5432/spring_cloud_fornecedor
   jpa:
     hibernate:
-    ddl-auto: created
+    ddl-auto: update
