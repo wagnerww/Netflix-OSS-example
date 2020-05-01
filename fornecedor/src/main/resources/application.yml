@@ -1,9 +1,5 @@
 server:
   port: 8081
-
-spring:
-  application:
-    name: 'fornecedor'
       
 eureka:
   client:
@@ -11,4 +7,4 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
-  
+

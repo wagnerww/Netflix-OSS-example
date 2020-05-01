@@ -8,5 +8,5 @@ spring:
     config:
       server:
         native:
-          search-locations: /Users/wagnerricardo/Documents/dev/JAVA/spring-cloud/netflix-oss-example/microservice-repo/
+          search-locations: file:/Users/wagnerricardo/Documents/dev/JAVA/spring-cloud/netflix-oss-example/microservice-repo/
           

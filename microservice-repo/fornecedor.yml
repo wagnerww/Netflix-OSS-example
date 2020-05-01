@@ -1,8 +1,9 @@
-datasource:
+spring:
+  datasource:
     username: postgres
     password: docker
     platform: postgres
     url: jdbc:postgresql://localhost:5432/spring_cloud_fornecedor
-jpa:
-  hibernate:
+  jpa:
+    hibernate:
     ddl-auto: update
