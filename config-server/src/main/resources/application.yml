@@ -3,10 +3,11 @@ server:
   
 spring:
   profiles:
-    active: native
+    active: git
   cloud:
     config:
       server:
-        native:
-          search-locations: file:/Users/wagnerricardo/Documents/dev/JAVA/spring-cloud/netflix-oss-example/microservice-repo/
+        git:
+          uri: https://github.com/wagnerww/Netflix-OSS-example
+          search-paths: microservice-repo
           
