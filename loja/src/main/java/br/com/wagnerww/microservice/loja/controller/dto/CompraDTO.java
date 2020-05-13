@@ -2,7 +2,20 @@ package br.com.wagnerww.microservice.loja.controller.dto;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class CompraDTO {
+
+	@JsonIgnore
+	private Long compraId;
+
+	public Long getCompraId() {
+		return compraId;
+	}
+
+	public void setCompraId(Long compraId) {
+		this.compraId = compraId;
+	}
 
 	private List<ItemCompraDTO> itens;
 

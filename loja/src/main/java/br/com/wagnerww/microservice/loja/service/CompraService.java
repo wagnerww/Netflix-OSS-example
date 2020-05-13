@@ -17,6 +17,7 @@ import br.com.wagnerww.microservice.loja.dto.InfoEntregaDTO;
 import br.com.wagnerww.microservice.loja.dto.InfoPedidoDTO;
 import br.com.wagnerww.microservice.loja.dto.VoucherDTO;
 import br.com.wagnerww.microservice.loja.model.Compra;
+import br.com.wagnerww.microservice.loja.model.CompraState;
 import br.com.wagnerww.microservice.loja.repository.CompraRepository;
 
 @Service
@@ -36,6 +37,10 @@ public class CompraService {
 	@HystrixCommand(fallbackMethod = "realizaCompraFallback", threadPoolKey = "realizaCompraThreadPool")
 	public Compra realizaCompra(CompraDTO compra) {
 
+		Compra novaCompra = new Compra();
+		novaCompra.setState(CompraState.RECEBIDO);
+		compraRepository.save(novaCompra);
+
 		final String estado = compra.getEndereco().getEstado();
 
 		Log.info("Buscando informações do fornecedor de {}", estado);
@@ -43,6 +48,13 @@ public class CompraService {
 
 		Log.info("Realizando um pedido");
 		InfoPedidoDTO pedido = fornecedorClient.realizaPedido(compra.getItens());
+
+		novaCompra.setPedidoId(pedido.getId());
+		novaCompra.setTempoDePreparo(pedido.getTempoDePreparo());
+		novaCompra.setEnderecoDestino(compra.getEndereco().toString());
+		novaCompra.setState(CompraState.PEDIDO_REALIZADO);
+		compraRepository.save(novaCompra);
+		compra.setCompraId(novaCompra.getId());
 
 		InfoEntregaDTO entregaDto = new InfoEntregaDTO();
 
@@ -52,13 +64,9 @@ public class CompraService {
 		entregaDto.setEnderecoDestino(compra.getEndereco().toString());
 
 		VoucherDTO voucher = transportadorClient.reservaEntrega(entregaDto);
-
-		Compra novaCompra = new Compra();
-		novaCompra.setPedidoId(pedido.getId());
-		novaCompra.setTempoDePreparo(pedido.getTempoDePreparo());
-		novaCompra.setEnderecoDestino(compra.getEndereco().toString());
 		novaCompra.setDataParaEntrega(voucher.getPrevisaoParaEntrega());
 		novaCompra.setVoucher(voucher.getNumero());
+		novaCompra.setState(CompraState.RESERVA_ENTREGA_REALIZADA);
 		compraRepository.save(novaCompra);
 
 		return novaCompra;
@@ -66,6 +74,11 @@ public class CompraService {
 	}
 
 	public Compra realizaCompraFallback(CompraDTO compra) {
+		
+		if(compra.getCompraId() != null) {
+			return compraRepository.findById(compra.getCompraId()).get();
+		}
+		
 		Compra compraFallback = new Compra();
 		compraFallback.setEnderecoDestino(compra.getEndereco().toString());
 
